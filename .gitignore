@@ -1,0 +1,6 @@
+# VS Code specific settings
+.vscode/
+
+# Windows user-level application data
+# You may need to remove a misplaced .git folder first
+AppData/

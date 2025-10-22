@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Congressional App Challenge Extension",
+  "version": "1.0",
+  "description": "An extension to assist with focus.",
+  "host_permissions": ["<all_urls>"],
+  "permissions": ["storage", "activeTab", "scripting", "sidePanel", "tabs"],
+  
+  "action": {
+    "default_popup": "popup.html"
+  },
+  
+  "side_panel": {
+    "default_path": "sidebar.html"
+  },
+  
+  "background": {
+    "service_worker": "serviceworker.js",
+    "type": "module"
+  }
+}
