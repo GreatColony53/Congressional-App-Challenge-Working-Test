@@ -11,10 +11,11 @@ agent = CodeAgent(tools=[], model=InferenceClientModel())
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/api/sum', methods=['POST'])
-def calculate_sum():
+@app.route('/api/analyze', methods=['POST'])
+def analyzeText():
     data = request.json
-    result = agent.run("Summarize the following text:" + data['n'])
+    prompt = "Summarize the following text: " + data['content'] + " --END OF TEXT--. Once you have summarized the text create a question and answer pair based on the text. The question should be insightful and avoid surface level content. The answer should be concise and accurate to the text. Return the question and answer pair in a key-value array with keys 'question' and 'answer'."
+    result = agent.run(prompt)
     return jsonify({"result": result})
 
 if __name__ == '__main__':

@@ -48,17 +48,54 @@ startBtn.addEventListener('click', () => {
   const now = new Date().getTime();
   //localStorage.setItem(programStart, now);
 
-  //open sidebar to study.html
+  // open sidebar.html in side panel
+  chrome.tabs.query({ active: true}, (tabs) => {
+    const tabId = tabs[0].id;
+    chrome.sidePanel.open({tabId});
+  });
+
+  
   console.log('start button clicked');
+  function getAllPDFText(url) {
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+      let textContent = '';
+
+      const numPages = pdf.numPages;
+      const loadPageText = pageNum => {
+        return pdf.getPage(pageNum).then(page => {
+          return page.getTextContent().then(content => {
+            const strings = content.items.map(item => item.str);
+            textContent += strings.join(' ') + '\n';
+          });
+        });
+      };
+
+      const loadAllPages = async () => {
+        for (let i = 1; i <= numPages; i++) {
+          await loadPageText(i);
+        }
+        console.log(textContent); // All text from the PDF
+        return textContent;
+      };
+
+      return loadAllPages();
+    });
+  };
+
   chrome.tabs.query({ active: true, currentWindow: true}, (tabs) => {
     const currentTabId = tabs[0].id;
-    chrome.sidePanel.open({currentTabId});
-    
-    // LOGIC for extracting text from PDF vs regular webpage. works maybe
-    const isPDF = false; // Placeholder for actual PDF detection logic
+    //chrome.sidePanel.open({currentTabId});
+    console.log("Tab url is: " + tabs[0].url);
+    let url = tabs[0].url;
+    let isPDF = false;
+    if (url.toLowerCase().endsWith(".pdf")) {
+        console.log("It's a PDF!");
+        isPDF = true;
+    }
+    // LOGIC for extracting text from PDF vs regular webpage. works
     if (isPDF) {
-      const url = 'https://folger-main-site-assets.s3.amazonaws.com/uploads/2022/11/romeo-and-juliet_PDF_FolgerShakespeare.pdf'; // Replace with your PDF file path
-      pdfjsLib.getDocument(url).promise.then(pdf => {
+      /*
+       pdfjsLib.getDocument(url).promise.then(pdf => {
         pdf.getPage(9).then(page => {
           page.getTextContent().then(textContent => {
             const text = textContent.items.map(item => item.str).join(' ');
@@ -67,8 +104,11 @@ startBtn.addEventListener('click', () => {
             analyzeTheText(text);
           });
         });
-      });
+      });*/
+      const allText = getAllPDFText(url);
+      analyzeTheText(allText);
     } else {
+      // calls content.js to extract text from webpage
       chrome.scripting.executeScript({
         target: { tabId: currentTabId },
         files: ['content.js']
@@ -76,31 +116,7 @@ startBtn.addEventListener('click', () => {
     }
     
   });
-
-
-
-
-
-/*
-  const desc = document.getElementById("desc");
-  console.log("Trying to change description text");
-  const n = "Tell me a joke about computers";
-
-  fetch("http://localhost:5000/api/sum", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ n: n })
-  })
-  .then(res => res.json())
-  .then(data => {
-    desc.innerText = "Result: " + data.result;
-  })
-  .catch(err => {
-    console.error("Error:", err);
-  });
-*/
 });
-
 
 // Listen for message from content.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -115,13 +131,13 @@ function analyzeTheText(text) {
   console.log("Analyzing text:", text);
 
   const desc = document.getElementById("desc");
-  const n = text;
   desc.innerText = "Analyzing...";
-/*
-  fetch("http://localhost:5000/api/sum", {
+
+  /* Working Code for APPFLASK execution. Uncomment for use.
+  fetch("http://localhost:5000/api/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ n: n })
+    body: JSON.stringify({ content: text })
   })
   .then(res => res.json())
   .then(data => {
@@ -131,7 +147,41 @@ function analyzeTheText(text) {
     console.error("Error:", err);
   });
   */
- desc.innerText = "Result: " + text;
+
+
+  // when a focus session is started an empty session is created in storage based on session name
+  const flashcardStorageKey = "FlashCardStorage";
+  const sessionName = document.getElementById("sessionNameInput").value;
+
+  function addSession (flashcards, sessionName) {
+    flashcards.push({
+      session: sessionName,
+      cards: {},
+    });
+    return flashcards;
+  }
+
+  chrome.storage.local.get([flashcardStorageKey]).then((FlashCardStorage) => {
+    console.log("Retrieved FlashCardStorage:", FlashCardStorage);
+    let flashcards = FlashCardStorage[flashcardStorageKey] || [];
+    console.log("Current flashcards:", flashcards);
+    flashcards = addSession(flashcards, sessionName);
+
+    chrome.storage.local.set({ [flashcardStorageKey]: flashcards }).then(() => {
+      console.log("Updated FlashCardStorage:", flashcards);
+    });
+
+    /*
+    if (FlashCardStorage[flashcardStorageKey]) {
+      console.log("FlashCardStorage found:", result[flashcardStorageKey]);
+    } else {
+      console.log("FlashCardStorage not found, creating new key-value pair.");
+      chrome.storage.local.set({ [flashcardStorageKey]: {} }).then(() => {
+        console.log("FlashCardStorage initialized.");
+      });
+    };*/
+  });
+ //desc.innerText = "Result: " + text;
 }
 
 

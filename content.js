@@ -1,6 +1,6 @@
 // content.js
 console.log("Content script loaded");
-const pageText = document.body.innerText;
+let  pageText = document.body.innerText;
 console.log("Extracted text:", pageText);
 
 // Optionally send it to the background or popup
