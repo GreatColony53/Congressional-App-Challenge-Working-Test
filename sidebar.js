@@ -157,6 +157,21 @@ function playSaveAnimation () {
 
 //!!!!-----------------END OF TIMER---------------------!!!!
 //!!!!-----------------START OF SAVE---------------------!!!!
+// EXAMPLE SAVE HIERARCHY IN STORAGE
+/*
+FlashcardStorege: [
+  {
+    session: tab.title,
+    cards: [{question: "", answer: ""}, {...}],
+    id: tab.id
+  },
+  {
+    session: tab.title,
+    cards: [{question: "", answer: ""}, {...}],
+    id: tab.id
+  }
+]
+*/
 
 function saveFlashcard() {
   chrome.storage.local.get(["FlashcardStorage"]).then(async (storage) => {
