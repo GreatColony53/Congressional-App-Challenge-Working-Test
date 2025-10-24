@@ -35,10 +35,9 @@ startBtn.addEventListener("click", async () => {
   const durationMs = (hours * 60 + minutes) * 60 * 1000;
 
   // Store timer duration and start time
-  const now = Date.now();
   await chrome.storage.local.set({
     timerDuration: durationMs,
-    startTime: now,
+    totalSessionDuration: durationMs,
   });
 
   // Open side panel
@@ -57,6 +56,8 @@ startBtn.addEventListener("click", async () => {
     const tab = await getTabById(studyTabId);
     await chrome.storage.local.set({
       currentTabId: tab.id,
+      isSessionActive: true,
+      isTimerActive: true,
     });
   } catch (error) {
     console.error("Error setting up flashcard session:", error);
