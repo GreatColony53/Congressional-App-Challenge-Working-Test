@@ -2,11 +2,10 @@
     <head>
         <title>Focus Extension Panel</title>
         <link rel = "stylesheet" href = "popup.css">
-        <script src="PDFLibrary/pdf.min.js"></script>></script>
     </head>
     <body style="background:#cbf2fe;">
-        <h1>Focus Extension Panel</h1>
-        <p id = "desc">This is the panel for the Focus Extension.</p>
+        <h1> Flashcard Quizard</h1>
+        <p id = "desc">Select how long you are going to study for and which tab you are going to study then start your session!</p>
         <select id = "hourSelect">
             <option value = "0"> 0 hours </option>
             <option value = "1" selected> 1 hour </option>
@@ -42,15 +41,10 @@
         <select id = "setStudyTabBtn">
             <option value="" disabled selected>Set your study tab!</option>
         </select>
-        <select id = "setNoteTabBtn">
-            <option value="" disabled selected>Set your note tab!</option>
-        </select>
 
         <br><br>
-        <input type="text" id="sessionNameInput" placeholder="Enter Session Name">
-
-        <br><br>
-        <button id = "startBtn"> Start Focus Session </button>
+        <button id = "startBtn" style = "display: none;"> Start Focus Session </button>
+        <button id = "libraryBtn"> Go to Wizard Tower of Knowledge </button>
 
         <script src="popup.js"></script>
 
