@@ -36,7 +36,7 @@ const floors = [
 ]
 const roof = "assets/Roof.png"
 
-function addImageBlock(imageUrl, desc) {
+function addImageBlock(imageUrl, desc, sessionID) {
   // Create outer div
   const wrapperDiv = document.createElement('div');
   wrapperDiv.style.width = "100%";
@@ -50,6 +50,10 @@ function addImageBlock(imageUrl, desc) {
   const img = document.createElement('img');
   img.src = imageUrl;
   img.alt = "Tower Part";
+  //so onClick we can store the sessionID and in reviewPage
+  //retrieve to use the appropriate flashcard
+  img.onclick = openReviewPage(sessionID);
+
   img.style.flex = "1";
   // img.style.border = "1px dashed purple";
 
@@ -80,11 +84,20 @@ chrome.storage.local.get(["FlashcardStorage"]).then((storage) => {
     const numFloors = flashcards.length;
     console.log("Number of floors to build:", numFloors);
 
-    addImageBlock(roof, "");
+    addImageBlock(roof, "", -1);
     const max = floors.length - 1;
     for (let i = 0; i < numFloors; i++) {
         let rand = Math.floor(Math.random() * max);
-        addImageBlock(floors[rand], flashcards[i].session);
+        addImageBlock(floors[rand], flashcards[i].session, i);
     };
-    addImageBlock(floor, "");
+    addImageBlock(floor, "", -1);
 });
+
+function openReviewPage(sessionID) {
+    if (sesionId != -1) {
+        chrome.tabs.create({ url: "reviewPage.html" });
+        chrome.storage.local.set({ "currentSessionID": sessionID }).then(() => {
+            console.log("Stored currentSessionID:", sessionID);
+        });
+    }
+}

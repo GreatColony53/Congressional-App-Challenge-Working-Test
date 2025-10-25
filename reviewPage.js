@@ -12,30 +12,69 @@ FlashcardStorege: [
     id: tab.id
   }
 ]
-chrome.storage.local.get(["FlashcardStorage"]).then(async (storage) => {
-  let numFlashcards = storage.FlashcardStorage[0 "supposed to be current session num"].cards.length;
-  for (let i = 0; i < numFlashcards; i++) {
-    parentDiv.innerHTML += `<div id="${i}" class="flashcard"> </div>';
-    adding to html div that was created(question portion) = storage.FlashcardStorage[0].cards[i].question;
-    adding to html div that was created(answer portion) = storage.FlashcardStorage[0].cards[i].answer;
-  }
-});
 */
+chrome.storage.local.get(["currentSessionID"]).then((storage) => {
+  createFlashcards(storage.currentSessionID);
+});
 
-const parentDiv = document.getElementById("test");
+function createFlashcards(currentSession) {
+  chrome.storage.local.get(["FlashcardStorage"]).then(async (storage) => {
+    let numFlashcards = storage.FlashcardStorage[currentSession].cards.length;
+    for (let i = 0; i < numFlashcards; i++) {
+      const newFlashcardDiv = document.createElement("div");
+      newFlashcardDiv.id = i;
+      newFlashcardDiv.className = "flashcard";
+      newFlashcardDiv.onclick = flipCard;
+      parentDiv.appendChild(newFlashcardDiv);
+
+      const questionP = document.createElement("p");
+      questionP.className = "TextElement";
+      questionP.textContent = storage.FlashcardStorage[currentSession].cards[i].question;
+      newFlashcardDiv.appendChild(questionP);
+
+      const answerP = document.createElement("p");
+      answerP.className = "TextElement";
+      answerP.textContent = storage.FlashcardStorage[currentSession].cards[i].answer;
+      newFlashcardDiv.appendChild(answerP);
+
+      if (i !== 0) {
+        newFlashcardDiv.style.display = "none";
+      }
+      else {
+        newFlashcardDiv.style.display = "block";
+      }
+    }
+  });
+}
+
+
+const parentDiv = document.getElementById("reviewSet");
+let currentFlashcardID = 0;
+const totalFlashcards = parentDiv.childElementCount;
 
 function prevCard() {
-    //change card div block to none
-    //change previous card div none to block
-    //if div id = 0, dont do anything
+    if (currentFlashcardID > 0) {
+      document.getElementById(currentFlashcardID).style.display = "none";
+      currentFlashcardID -= 1;
+      document.getElementById(currentFlashcardID).style.display = "block";
+    }
 }
 
 function flipCard() {
-    //change card text content from showing one to not showing one
+  if (document.getElementById(currentFlashcardID).children[0].style.display === "block") {
+    document.getElementById(currentFlashcardID).children[0].style.display = "none";
+    document.getElementById(currentFlashcardID).children[1].style.display = "block";
+  }
+  else {
+    document.getElementById(currentFlashcardID).children[0].style.display = "block";
+    document.getElementById(currentFlashcardID).children[1].style.display = "none";
+  }
 }
 
 function nextCard() {
-    //change card div block to none
-    //change next card div none to block
-    //if div id = card.length - 1, dont do anything
+    if (currentFlashcardID < totalFlashcards - 1) {
+      document.getElementById(currentFlashcardID).style.display = "none";
+      currentFlashcardID += 1;
+      document.getElementById(currentFlashcardID).style.display = "block";
+    }
 }
