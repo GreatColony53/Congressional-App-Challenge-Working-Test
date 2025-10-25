@@ -22,7 +22,7 @@ chrome.runtime.sendMessage({type: "POPUP_OPENED"}, (response) => {
 });
 
 setStudyTabBtn.addEventListener("change", async () => {
-  startBtn.style.display = "inline-block";
+  startBtn.style.display = "block";
 });
 
 // Handles Start Session
