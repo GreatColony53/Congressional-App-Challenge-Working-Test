@@ -13,10 +13,11 @@ FlashcardStorege: [
   }
 ]
 */
-chrome.storage.local.get(["currentSessionID"]).then((storage) => {
-  createFlashcards(storage.currentSessionID);
+chrome.storage.local.get(["currentReviewSessionID"]).then((storage) => {
+  createFlashcards(storage.currentReviewSessionID);
 });
 
+let totalFlashCards;
 function createFlashcards(currentSession) {
   chrome.storage.local.get(["FlashcardStorage"]).then(async (storage) => {
     let numFlashcards = storage.FlashcardStorage[currentSession].cards.length;
@@ -35,6 +36,7 @@ function createFlashcards(currentSession) {
       const answerP = document.createElement("p");
       answerP.className = "TextElement";
       answerP.textContent = storage.FlashcardStorage[currentSession].cards[i].answer;
+      answerP.style.display = "none";
       newFlashcardDiv.appendChild(answerP);
 
       if (i !== 0) {
@@ -44,15 +46,31 @@ function createFlashcards(currentSession) {
         newFlashcardDiv.style.display = "block";
       }
     }
+    totalFlashcards = parentDiv.children.length;
+    console.log("totalFlashCards in set: " + totalFlashcards);
   });
 }
 
 
 const parentDiv = document.getElementById("reviewSet");
 let currentFlashcardID = 0;
-const totalFlashcards = parentDiv.childElementCount;
+
+
+
+const forw = document.getElementById("forw");
+const back = document.getElementById("back");
+forw.addEventListener("click", async () => {
+  console.log("Start button clicked");
+  nextCard();
+});
+
+back.addEventListener("click", async () => {
+  console.log("Bakc button clicked");
+  prevCard();
+});
 
 function prevCard() {
+  console.log("currenFlashCardId: " + currentFlashcardID);
     if (currentFlashcardID > 0) {
       document.getElementById(currentFlashcardID).style.display = "none";
       currentFlashcardID -= 1;
@@ -61,6 +79,7 @@ function prevCard() {
 }
 
 function flipCard() {
+  console.log("currenFlashCardId: " + currentFlashcardID);
   if (document.getElementById(currentFlashcardID).children[0].style.display === "block") {
     document.getElementById(currentFlashcardID).children[0].style.display = "none";
     document.getElementById(currentFlashcardID).children[1].style.display = "block";
@@ -72,6 +91,7 @@ function flipCard() {
 }
 
 function nextCard() {
+  console.log("currenFlashCardId: " + currentFlashcardID);
     if (currentFlashcardID < totalFlashcards - 1) {
       document.getElementById(currentFlashcardID).style.display = "none";
       currentFlashcardID += 1;

@@ -52,7 +52,7 @@ function addImageBlock(imageUrl, desc, sessionID) {
   img.alt = "Tower Part";
   //so onClick we can store the sessionID and in reviewPage
   //retrieve to use the appropriate flashcard
-  img.onclick = openReviewPage(sessionID);
+  img.onclick = () => openReviewPage(sessionID);
 
   img.style.flex = "1";
   // img.style.border = "1px dashed purple";
@@ -94,9 +94,10 @@ chrome.storage.local.get(["FlashcardStorage"]).then((storage) => {
 });
 
 function openReviewPage(sessionID) {
-    if (sesionId != -1) {
+    console.log("Called open review page!")
+    if (sessionID != -1) {
         chrome.tabs.create({ url: "reviewPage.html" });
-        chrome.storage.local.set({ "currentSessionID": sessionID }).then(() => {
+        chrome.storage.local.set({ "currentReviewSessionID": sessionID }).then(() => {
             console.log("Stored currentSessionID:", sessionID);
         });
     }
