@@ -142,12 +142,41 @@ function updateTimer() {
     setTimeout(() => updateTimer(), 1000);
   });
 }
+/*
+// Rewrite Animation Codes
+playAnimation(“Save”)
+setTimeout(()=>playAnimation(“Make”), 1000)
 
+function playAnimation (animationName) {
+	animationName = “assets/” + animationName + “.gif”;
+	wizard.src = animationName
+}
+*/
 const wizard = document.getElementById("wizardGif");
 function playAnimation (animationName) {
 	animationName = "assets/" + animationName + ".gif";
 	wizard.src = animationName
 }
+/*
+// Plays the save animation called by update timer then resets to make gif
+const wizard = document.getElementById("wizardGif");
+function playSaveAnimation () {
+  wizard.src = "assets/Save.gif";
+  setTimeout(() => {
+    playAnimation();
+    console.log("Wizard Finished Saving");
+  }, 2250);
+  // AFTER SAVING check to seee if the session is active in order to start end animation
+};
+
+function playAnimation () {
+  wizard.src = "assets/Make.gif";
+}
+
+function playStopAnimation () {
+  wizard.src = "assets/Stop.gif";
+};
+*/
 
 //!!!!-----------------END OF TIMER---------------------!!!!
 //!!!!-----------------START OF SAVE---------------------!!!!
