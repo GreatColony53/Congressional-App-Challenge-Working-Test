@@ -1,8 +1,5 @@
 // !!!!-----------------TEXT EXTRACTION CODE---------------------!!!!
-
-
 const AUTO_SAVE_INTERVAL = 10000; // 10 seconds. Has to be a factor of the total duration
-
 let tab;
 let text;
 async function setTabAndPageText() {
@@ -16,12 +13,10 @@ async function setTabAndPageText() {
   }
 }
 
-setTabAndPageText();
-
 function getStudyTab() {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get(["currentTabId"]).then((storage) => {
-      const tabId = parseInt(storage.currentTabId);
+    chrome.storage.local.get(["studyTabId"]).then((storage) => {
+      const tabId = parseInt(storage.studyTabId);
       chrome.tabs.get(tabId, (tab) => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
@@ -45,7 +40,7 @@ function getTextFrom(tab) {
       // WEBPAGE Extraction
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        files: ['content.js']
+        files: ['extractText.js']
       });
       chrome.runtime.onMessage.addListener(function listener(message, sender, sendResponse) {
           chrome.runtime.onMessage.removeListener(listener);
@@ -75,8 +70,6 @@ async function getAllPDFText(url) {
 // !!!!-----------------END OF TEXT EXTRACTION---------------------!!!!
 // !!!!-----------------TIMER CODE---------------------!!!!
 
-updateTimer();
-
 function updateTimer() {
   chrome.storage.local.get(["isTimerActive", "isSessionActive", "timerDuration"]).then((storage) => {
     let durationLeft = storage.timerDuration;
@@ -89,10 +82,7 @@ function updateTimer() {
     console.log("isTimerActive state:", isTimerActive);
 
     if (!isTimerActive) {
-      //setTimeout(() => updateTimer(), 1000);
       console.log("Timer is paused, not updating display.");
-      //playStopAnimation();
-      playAnimation("Stop")
       return;
     };
     
@@ -142,41 +132,14 @@ function updateTimer() {
     setTimeout(() => updateTimer(), 1000);
   });
 }
-/*
-// Rewrite Animation Codes
-playAnimation(“Save”)
-setTimeout(()=>playAnimation(“Make”), 1000)
 
-function playAnimation (animationName) {
-	animationName = “assets/” + animationName + “.gif”;
-	wizard.src = animationName
-}
-*/
+
+
 const wizard = document.getElementById("wizardGif");
 function playAnimation (animationName) {
 	animationName = "assets/" + animationName + ".gif";
 	wizard.src = animationName
 }
-/*
-// Plays the save animation called by update timer then resets to make gif
-const wizard = document.getElementById("wizardGif");
-function playSaveAnimation () {
-  wizard.src = "assets/Save.gif";
-  setTimeout(() => {
-    playAnimation();
-    console.log("Wizard Finished Saving");
-  }, 2250);
-  // AFTER SAVING check to seee if the session is active in order to start end animation
-};
-
-function playAnimation () {
-  wizard.src = "assets/Make.gif";
-}
-
-function playStopAnimation () {
-  wizard.src = "assets/Stop.gif";
-};
-*/
 
 //!!!!-----------------END OF TIMER---------------------!!!!
 //!!!!-----------------START OF SAVE---------------------!!!!
@@ -279,22 +242,39 @@ libraryBtn.addEventListener("click", () => {
   chrome.tabs.create({ url: "library.html" });
 });
 
+function pauseEverything () {
+  chrome.storage.local.set({isTimerActive: false}).then(() => {
+    playAnimation("Stop")
+    setTimeout(() => playAnimation("Pause"), 1900)
+    pauseBtn.textContent = "Resume";
+  });
+}
+
 const pauseBtn = document.getElementById("pauseBtn");
 pauseBtn.addEventListener("click", async () => {
   console.log("Pause button clicked");
-  await chrome.storage.local.get(["isTimerActive"]).then((storage) => {
-    const currentState = storage.isTimerActive;
-    console.log("Current isTimerActive state:", currentState);
+  await chrome.storage.local.get(["isTimerActive", "currentTabId", "isSessionActive"]).then((storage) => {
+    const isSessionActive = storage.isSessionActive;
+    console.log("Current isSessionActive state:", isSessionActive);
+    if (!isSessionActive){
+      return;
+    }
 
-    if (!currentState) {
+    const isTimerActive = storage.isTimerActive;
+    console.log("Current isTimerActive state:", isTimerActive);
+
+    const currentTabId = storage.currentTabId;
+    console.log("Current currentTabId:", currentTabId);
+
+    if (!isTimerActive && currentTabId === tab.id) { // Unpause
       chrome.storage.local.set({isTimerActive: true}).then(() => {
         updateTimer();
         pauseBtn.textContent = "Pause";
       });
+    } else if (!isTimerActive){
+      // Do nothing because you are not on the right tab.
     } else {
-      chrome.storage.local.set({isTimerActive: false}).then(() => {
-        pauseBtn.textContent = "Resume";
-      });
+      pauseEverything();
     }
   });
 });
@@ -303,7 +283,49 @@ const endSessionBtn = document.getElementById("endSessionBtn");
 endSessionBtn.addEventListener("click", async () => {
   console.log("End Session button clicked");
   await chrome.storage.local.set({ isSessionActive: false, isTimerActive: true});
+  updateTimer();
 });
 
+const sessionNameTitle = document.getElementById("sessionNameTitle")
 
 // !!!!-----------------END OF LIBRARY BTN CODE---------------------!!!!
+// !!!!-----------------START OF TAB DETECTION CODE---------------------!!!!
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "TAB_SWITCHED") {
+    console.log("Sidebar received tab switch:", message.tabId);
+    chrome.storage.local.set({currentTabId: message.tabId})
+    console.log("Supposed to be on tab: " + tab.id)
+
+    if (tab.id !== message.tabId) {
+      pauseEverything();
+      setTimeout(() => playAnimation("Transition"), 2900)
+      setTimeout(() => playAnimation("Angry"), 3500)
+    } else {
+      playAnimation("Pause");
+    };
+  }
+});
+
+// must use an async function in order to use "await"
+async function initializeSideBar () {
+  await setTabAndPageText();
+  sessionNameTitle.textContent = "Session: " + tab.title
+  
+  chrome.runtime.sendMessage({type: "SIDEBAR_OPENED"}, (response) => {
+    console.log(response);
+    console.log("Current tab is: " + response.tabId);
+    chrome.storage.local.set({currentTabId: response.tabId})
+    console.log("Supposed to be on tab: " + tab.id);
+
+    if (tab.id !== response.tabId) {
+      updateTimer();
+      setTimeout(() => pauseEverything(), 1000);
+      setTimeout(() => playAnimation("Transition"), 3900)
+      setTimeout(() => playAnimation("Angry"), 4500)
+    } else {
+      updateTimer();
+    };
+  });
+}
+
+initializeSideBar();

@@ -55,7 +55,7 @@ startBtn.addEventListener("click", async () => {
   try {
     const tab = await getTabById(studyTabId);
     await chrome.storage.local.set({
-      currentTabId: tab.id,
+      studyTabId: tab.id,
       isSessionActive: true,
       isTimerActive: true,
     });
