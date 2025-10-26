@@ -1,22 +1,49 @@
+@font-face {
+  font-family: 'MedievalSharp';
+  src: url('../MedievalSharp/MedievalSharp-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* ensures fallback text shows immediately */
+}
+
 /* Buttons container */
 body {
     margin: 5px 5px;
 }
 
+#header {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centers children horizontally */
+  justify-content: center;
+  text-align: center;
+  padding: 8px 16px;
+  gap: 10px;
+  width: 90%;
+}
+
+#sessionNameTitle {
+  font-family: 'MedievalSharp', serif;
+  font-size: 16px;
+  padding: 8px;
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+  margin: 0;
+}
+
 #btns {
-  position: fixed;               /* anchored to screen */
-  bottom: 5px;                 /* sits just above timer */
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   gap: 15px;
-  z-index: 3;                    /* above timer & wizard */
+  z-index: 1;                    /* below timer & title */
 }
 
 /* Button styling */
 #btns button {
-  padding: 10px 20px;
+  padding: 8px;
   font-size: 12px;
   font-weight: 600;
   border: none;
@@ -25,6 +52,7 @@ body {
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-family: 'MedievalSharp', serif;
 }
 
 #btns button:hover {
@@ -33,10 +61,6 @@ body {
 
 /* Timer container above wizard */
 #timer {
-  position: fixed;
-  top: 5px;                 /* above wizard */
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -65,13 +89,13 @@ body {
   margin: 0;
   font-size: 18px;
   color: #333;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'MedievalSharp', serif;
 }
 
 /* Wizard GIF full-width background at bottom */
 #wizardGif {
   position: fixed;
-  bottom: 65px;
+  bottom: 10px;
   width: 95%;                   /* spans full width */
   height: auto;
   z-index: 1;                    /* behind timer and buttons */

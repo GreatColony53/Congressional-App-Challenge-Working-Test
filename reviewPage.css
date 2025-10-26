@@ -1,0 +1,162 @@
+@font-face {
+  font-family: 'MedievalSharp';
+  src: url('../MedievalSharp/MedievalSharp-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* ensures fallback text shows immediately */
+}
+
+/* Top info bar */
+#infoBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 40px;
+  background-color: #f5faff;
+  border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: 'MedievalSharp', serif;
+}
+
+#infoBar h1 {
+  margin: 0;
+  font-size: 30px;
+  color: #357ab8;
+}
+
+#infoBar p {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  color: #333;
+}
+
+
+/* Flashcard container: fills screen height, centered between arrows */
+#reviewSet {
+  position: fixed;
+  top: 50%;
+  left: 250px;
+  right: 250px;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  background: transparent;
+  z-index: 5;
+  box-sizing: border-box;
+
+  transition: 
+    transform 0.3s ease, 
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Hover effect */
+#reviewSet:hover {
+  transform: translateY(-52%) scale(1.02); /* slight lift and grow */
+  background-color: rgba(230, 244, 255, 0.3); /* soft blue highlight */
+  box-shadow: 0 10px 20px rgba(46, 64, 112, 0.747); /* glowing shadow */
+  border-radius: 12px; /* rounded edges for subtle style */
+}
+
+/* Optional active/click effect */
+#reviewSet:active {
+  transform: translateY(-50%) scale(0.98); /* quick press-down */
+  box-shadow: 0 5px 12px rgba(46, 64, 112, 0.747);
+  background-color: rgba(210, 235, 255, 0.4);
+}
+
+#cardNumber {
+  position: absolute;
+  top: 5px;
+  right: 5px;              /* align top-right of the card */
+  padding: 6px;        /* some padding like a label */
+  font-size: 18px;           /* similar hierarchy to #displayCard p */
+  font-weight: bold;
+  color: #357ab8;           /* match h1 / blue accents */
+  background-color: rgba(245, 250, 255, 0.9); /* semi-transparent soft blue */
+  border: 1px solid rgba(74, 144, 226, 0.3);
+  border-radius: 8px;       /* rounded edges like the card */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 6;               /* above the card but below info bar */
+  text-align: center;
+  min-width: 25px;
+  margin: 0;
+}
+
+
+.card {
+    display: none;
+}
+
+#displayCard {
+  display: block; /* MUST HAVE */
+  background-color: #f5faff;                /* soft light-blue background */
+  border: 2px solid rgba(74, 144, 226, 0.3); /* subtle blue border */
+  border-radius: 12px;                      /* rounded edges */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  width: 100%;
+  min-width: fit-content;
+  height: fit-content;
+  margin: 0;
+  text-align: center;
+  color: #333;
+  cursor: pointer;
+  transition: 
+    transform 0.2s ease, 
+    box-shadow 0.3s ease, 
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+#displayCard p {
+  font-size: 23px;
+  color: #333;
+  font-family: Garamond, serif;
+}
+
+
+/* Common styles for both buttons */
+#left, #right {
+  position: fixed;
+  top: 50%;                   /* vertically center */
+  transform: translateY(-50%);
+  width: 100px;
+  height: 100px;
+  border: none;
+  border-radius: 50%;         /* circular background */
+  background-color: rgba(74, 144, 226, 0.3); /* light blue transparent */
+  color: white;
+  font-size: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-family: 'MedievalSharp', serif;
+}
+
+/* Left button on the left side */
+#left {
+  left: 100px;
+}
+
+/* Right button on the right side */
+#right {
+  right: 100px;
+}
+
+/* Hover effects */
+#left:hover, #right:hover {
+  background-color: rgba(74, 144, 226, 0.6); /* brighter on hover */
+  transform: translateY(-50%) scale(1.1);     /* slight grow effect */
+}

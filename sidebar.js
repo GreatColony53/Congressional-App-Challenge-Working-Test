@@ -1,5 +1,5 @@
 // !!!!-----------------TEXT EXTRACTION CODE---------------------!!!!
-const AUTO_SAVE_INTERVAL = 10000; // 10 seconds. Has to be a factor of the total duration
+const AUTO_SAVE_INTERVAL = 180000; // 2.5 minutes. Has to be a factor of the total duration. 5 minute intervals are selectable.
 let tab;
 let text;
 async function setTabAndPageText() {
@@ -282,8 +282,13 @@ pauseBtn.addEventListener("click", async () => {
 const endSessionBtn = document.getElementById("endSessionBtn");
 endSessionBtn.addEventListener("click", async () => {
   console.log("End Session button clicked");
-  await chrome.storage.local.set({ isSessionActive: false, isTimerActive: true});
-  updateTimer();
+  chrome.storage.local.get(["isSessionActive"]).then(async (storage) => {
+    console.log("Retrieved FlashcardStorage:", storage.FlashcardStorage);
+    if (storage.isSessionActive) {
+      await chrome.storage.local.set({ isSessionActive: false, isTimerActive: true});
+      updateTimer();
+    }
+  });
 });
 
 const sessionNameTitle = document.getElementById("sessionNameTitle")

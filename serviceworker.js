@@ -5,7 +5,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "POPUP_OPENED") {
+  if (message.type !== "SIDEBAR_OPENED" && message.type === "POPUP_OPENED") {
     console.log("Popup was opened!");
     // Do something here
     chrome.tabs.query({currentWindow: true }, (tabs) => {
@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
       }
     });
-    
+
     return true;
   };
 });

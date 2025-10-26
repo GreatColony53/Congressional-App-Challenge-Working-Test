@@ -40,6 +40,7 @@ startBtn.addEventListener("click", async () => {
     totalSessionDuration: durationMs,
   });
 
+  
   // Open side panel
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

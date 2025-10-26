@@ -1,17 +1,22 @@
 <html>
     <head>
         <title>Study Time!</title>
-        <link rel="stylesheet" href="reviewPageStyle.css"></link>
+        <link rel="stylesheet" href="reviewPage.css"></link>
     </head>
 
     <body style="background:#cbf2fe;">
+        <div id = "infoBar">
+            <h1 id = "sessionNameTitle">Session: </h1>
+            <p>Try clicking the flashcard!</p>
+        </div>
         
-        <div id="reviewSet" class="test"> 
-            <!--implemented through reviewPage.js--->
+        <div id="reviewSet"> 
+            <h2 id = "cardNumber">#1</h2>
+            <!--displayCard implemented through reviewPage.js--->
         </div>
 
-        <button id="back" class="button" style="left:100px;">Previous Card</button>
-        <button id="forw" class="button" style="left:400px;">Next Card</button>
+        <button id="left">&lt;</button>
+        <button id="right">></button>
 
         <script src="reviewPage.js"></script>
 

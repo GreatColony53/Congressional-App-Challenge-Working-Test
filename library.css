@@ -1,4 +1,141 @@
+@font-face {
+  font-family: 'MedievalSharp';
+  src: url('../MedievalSharp/MedievalSharp-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* ensures fallback text shows immediately */
+}
+
+/* === Page Setup (reverse scroll illusion) === */
+html, body {
+  background: #cbf2fe;
+  font-family: 'MedievalSharp', serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column-reverse; /* <— key: start from bottom */
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* === Title + Description Section (at bottom) === */
+#intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2em;
+  background-color: #f5f5f5;
+  display: inline-block;
+  padding: 10px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+}
+
+p {
+  font-size: 1.1em;
+  margin: 0;
+  max-width: 600px;
+  background-color: #ffffffcc;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* === Castle Container === */
 #castle {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+  animation: floatTower 5s ease-in-out infinite;
+}
+
+/* === Tower Sections === */
+#Floor,
+.Middle,
+#Roof {
+  position: relative;
+}
+
+/* === Tower Images === */
+#castle img {
+  width: 300px;
+  height: auto;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#castle .Middle img:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* === Floor Labels === */
+.Middle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.Middle h2 {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+  max-width: 400px;
+  white-space: nowrap; /* prevents text from wrapping to multiple lines */
+  overflow: hidden; /* hides overflow if text is too long */
+  text-overflow: ellipsis; /* adds "..." if it’s too long */
+  font-size: 14px;
+  color: #222;
+  background-color: #f5f5f5;
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-family: 'MedievalSharp', serif;
+}
+
+/* === Subtle Floating Animation === */
+@keyframes floatTower {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+
+/* === Scrollbar Styling (WebKit browsers) === */
+::-webkit-scrollbar {
+  width: 8px;           /* thinner scrollbar */
+  height: 8px;          /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track {
+  background: #e0f6ff;   /* soft blue background */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4a90e2;   /* your existing button blue */
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #357ab8;   /* darker on hover */
 }
