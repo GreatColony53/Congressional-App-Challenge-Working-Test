@@ -36,7 +36,7 @@ startBtn.addEventListener("click", async () => {
 
   // Store timer duration and start time
   await chrome.storage.local.set({
-    timerDuration: durationMs,
+    timerDuration: durationMs - 1000, // offset by 1000 so as to not trigger an immediate autosave
     totalSessionDuration: durationMs,
   });
 

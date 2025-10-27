@@ -1,5 +1,5 @@
 // !!!!-----------------TEXT EXTRACTION CODE---------------------!!!!
-const AUTO_SAVE_INTERVAL = 180000; // 2.5 minutes. Has to be a factor of the total duration. 5 minute intervals are selectable.
+const AUTO_SAVE_INTERVAL = 150000; // 2.5 minutes. Has to be a factor of the total duration. 5 minute intervals are selectable.
 let tab;
 let text;
 async function setTabAndPageText() {
@@ -101,19 +101,16 @@ function updateTimer() {
       hoursCt.textContent = "00:";
       minutesCt.textContent = "00:";
       secondsCt.textContent = "00";
+      console.log("Triggering End of session save...")
       playAnimation("Stop")
       return;
     }
-    //playAnimation();
-    playAnimation("Make")
     
     // Must be after checking timer ended
-    if (!isSessionActive) {
-      setTimeout(() => {
-        durationLeft = 0;
-        chrome.storage.local.set({ timerDuration: durationLeft });
-        updateTimer();
-      });
+    if (!isSessionActive && durationLeft >= 0) {
+      durationLeft = -1;
+      chrome.storage.local.set({ timerDuration: durationLeft });
+      updateTimer();
       return;
     }
     
@@ -127,9 +124,13 @@ function updateTimer() {
     minutesCt.textContent = String(minutes).padStart(2, "0") + ":";
     secondsCt.textContent = String(seconds).padStart(2, "0");
 
-    durationLeft -= 1000;
-    chrome.storage.local.set({ timerDuration: durationLeft });
-    setTimeout(() => updateTimer(), 1000);
+    
+    if (isSessionActive) {
+      durationLeft -= 1000;
+      chrome.storage.local.set({ timerDuration: durationLeft });
+      setTimeout(() => updateTimer(), 1000);
+    }
+    
   });
 }
 
@@ -270,6 +271,7 @@ pauseBtn.addEventListener("click", async () => {
       chrome.storage.local.set({isTimerActive: true}).then(() => {
         updateTimer();
         pauseBtn.textContent = "Pause";
+        playAnimation("Make");
       });
     } else if (!isTimerActive){
       // Do nothing because you are not on the right tab.
@@ -287,6 +289,7 @@ endSessionBtn.addEventListener("click", async () => {
     if (storage.isSessionActive) {
       await chrome.storage.local.set({ isSessionActive: false, isTimerActive: true});
       updateTimer();
+      saveFlashcard();
     }
   });
 });
@@ -329,6 +332,7 @@ async function initializeSideBar () {
       setTimeout(() => playAnimation("Angry"), 4500)
     } else {
       updateTimer();
+      playAnimation("Make");
     };
   });
 }

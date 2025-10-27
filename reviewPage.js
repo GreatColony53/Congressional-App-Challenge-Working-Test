@@ -59,10 +59,6 @@ chrome.storage.local.get(["FlashcardStorage", "currentReviewSessionID"]).then((s
     reviewSet.insertBefore(cardDiv, cardNumber);
   }
   updateDisplayCard() // Initializes with the index 0 card
-  left.style.display = "none";
-  if (reviewSet.getElementsByClassName("card").length <= 1) {
-    right.style.display = "none";
-  }
 });
 
 function updateDisplayCard () {
@@ -75,13 +71,13 @@ function updateDisplayCard () {
   cardNumber.textContent = currentFlashcardID;
 
   // Set the correct visibility for left and right buttons
-  if (currentFlashcardID <= 1) {
+  right.style.display = "block";
+  left.style.display = "block";
+  if (currentFlashcardID <= 0) {
     left.style.display = "none";
-  } else if (currentFlashcardID >= cards.length - 1) {
+  }
+  if (currentFlashcardID >= cards.length - 1) {
     right.style.display = "none";
-  } else {
-    right.style.display = "block";
-    left.style.display = "block";
   }
 }
 
