@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from huggingface_hub import login
-login(token = "")
+login(token = "") # not allowed to make token public or it won't work, can check one of the master commits where I published the token however that token got immediately taken down
 
 from smolagents import CodeAgent, InferenceClientModel
 
